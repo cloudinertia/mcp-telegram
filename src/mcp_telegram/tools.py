@@ -138,12 +138,18 @@ async def list_messages(
         for message in result.messages:
             logger.debug("message: %s", message)
 
+        dialog_unread_count = 0
+        if result.dialogs:
+            dialog_info = result.dialogs[0]
+            if isinstance(dialog_info, types.Dialog):
+                dialog_unread_count = dialog_info.unread_count
+
         iter_messages_args: dict[str, t.Any] = {
             "entity": args.dialog_id,
             "reverse": False,
         }
         if args.unread:
-            iter_messages_args["limit"] = min(dialog.unread_count, args.limit)
+            iter_messages_args["limit"] = min(dialog_unread_count, args.limit)
         else:
             iter_messages_args["limit"] = args.limit
 
